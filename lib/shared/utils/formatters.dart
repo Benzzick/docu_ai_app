@@ -1,29 +1,46 @@
-String formatDateModified(DateTime date) {
+import 'package:docu_ai_app/models/enums.dart';
+
+String formatDateModified(DateTime date, DateFormat format) {
   final currentDate = DateTime.now();
   final difference = currentDate.difference(date);
 
   if (difference.inSeconds < 60) {
-    return 'Opened now';
+    return format == DateFormat.short ? 'now' : 'Opened now';
   } else if (difference.inMinutes < 60) {
-    return difference.inMinutes == 1
-        ? 'Opened a minute ago'
-        : 'Opened ${difference.inMinutes} minutes ago';
+    final value = difference.inMinutes;
+    final unit = value == 1 ? 'minute' : 'minutes';
+    return format == DateFormat.short
+        ? '$value $unit'
+        : 'Opened $value $unit ago';
   } else if (difference.inHours < 24) {
-    return difference.inHours == 1
-        ? 'Opened an hour ago'
-        : 'Opened ${difference.inHours} hours ago';
+    final value = difference.inHours;
+    final unit = value == 1 ? 'hour' : 'hours';
+    return format == DateFormat.short
+        ? '$value $unit'
+        : 'Opened $value $unit ago';
   } else if (difference.inDays < 7) {
-    return difference.inDays == 1
-        ? 'Opened a day ago'
-        : 'Opened ${difference.inDays} days ago';
+    final value = difference.inDays;
+    final unit = value == 1 ? 'day' : 'days';
+    return format == DateFormat.short
+        ? '$value $unit'
+        : 'Opened $value $unit ago';
   } else if (difference.inDays < 30) {
     final weeks = (difference.inDays / 7).round();
-    return weeks == 1 ? 'Opened a week ago' : 'Opened $weeks weeks ago';
+    final unit = weeks == 1 ? 'week' : 'weeks';
+    return format == DateFormat.short
+        ? '$weeks $unit'
+        : 'Opened $weeks $unit ago';
   } else if (difference.inDays < 365) {
     final months = (difference.inDays / 30).round();
-    return months == 1 ? 'Opened a month ago' : 'Opened $months months ago';
+    final unit = months == 1 ? 'month' : 'months';
+    return format == DateFormat.short
+        ? '$months $unit'
+        : 'Opened $months $unit ago';
   } else {
     final years = (difference.inDays / 365).round();
-    return years == 1 ? 'Opened a year ago' : 'Opened $years years ago';
+    final unit = years == 1 ? 'year' : 'years';
+    return format == DateFormat.short
+        ? '$years $unit'
+        : 'Opened $years $unit ago';
   }
 }

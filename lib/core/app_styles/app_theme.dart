@@ -73,6 +73,10 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
+      bodyMedium: TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.normal,
+      ),
       bodySmall: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,

@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:docu_ai_app/core/global_providers/pdf_provider.dart';
-import 'package:docu_ai_app/features/home/widgets/pdf_thumbnail_button.dart';
+import 'package:docu_ai_app/shared/widgets/pdf_thumbnail_button.dart';
 import 'package:docu_ai_app/features/home/widgets/rounded_button.dart';
 import 'package:floating_bubbles/floating_bubbles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -55,7 +55,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              context.push('/settings');
+            },
             icon: Icon(Icons.settings),
           ),
           SizedBox(
@@ -154,25 +156,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   builder: (context, ref, child) {
                     if (pdfs.isEmpty) {
                       return Center(
-                          child: Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 7,
+                          strokeCap: StrokeCap.round,
+                          color: Theme.of(context).colorScheme.primary,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surface,
                         ),
-                        height: 400,
-                        width: 300,
-                        child: Shimmer.fromColors(
-                          direction: ShimmerDirection.ltr,
-                          baseColor: Theme.of(context).colorScheme.outline,
-                          highlightColor:
-                              Theme.of(context).colorScheme.secondary,
-                          child: Container(
-                            width: 100,
-                            height: 130,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ));
+                      );
                     }
                     return child!;
                   },

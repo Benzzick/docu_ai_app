@@ -1,18 +1,10 @@
+import 'package:docu_ai_app/models/enums.dart';
 import 'package:docu_ai_app/models/pdf.dart';
-import 'package:docu_ai_app/shared/utils/formatters.dart';
+import 'package:docu_ai_app/shared/utils/streams.dart';
 import 'package:flutter/material.dart';
 
 class PdfThumbnailButton extends StatelessWidget {
   const PdfThumbnailButton({super.key, required this.pdf});
-
-  Stream<String> dateModifiedStream(DateTime date) async* {
-    yield formatDateModified(date); // Initial value
-
-    while (true) {
-      await Future.delayed(const Duration(minutes: 1));
-      yield formatDateModified(date);
-    }
-  }
 
   final Pdf pdf;
 
@@ -44,7 +36,7 @@ class PdfThumbnailButton extends StatelessWidget {
               ),
         ),
         StreamBuilder<String>(
-            stream: dateModifiedStream(pdf.dateModified),
+            stream: dateModifiedStream(pdf.dateModified, DateFormat.long),
             builder: (context, snapshot) {
               return Text(snapshot.data ?? 'Yes');
             }),

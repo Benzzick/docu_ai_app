@@ -6,6 +6,7 @@ import 'package:docu_ai_app/features/onboarding/ui/screens/onboarding_screen.dar
 import 'package:docu_ai_app/features/preview/ui/edit_pdf.dart';
 import 'package:docu_ai_app/features/preview/ui/preview_pdf.dart';
 import 'package:docu_ai_app/features/preview/ui/preview_scanned_image.dart';
+import 'package:docu_ai_app/features/settings/ui/settings_screen.dart';
 import 'package:docu_ai_app/models/pdf.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,6 +47,12 @@ class AppRouter {
       path: '/edit-pdf',
       builder: (context, state) {
         return EditPdf(pdf: state.extra as Pdf);
+      },
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) {
+        return SettingsScreen();
       },
     )
   ]);

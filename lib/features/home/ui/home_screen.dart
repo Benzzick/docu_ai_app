@@ -203,7 +203,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         EdgeInsets.only(left: width * 0.08),
                                   ),
                                 InkWell(
-                                  onTap: () async {},
+                                  onTap: () async {
+                                    context.push('/preview-pdf', extra: pdf);
+                                  },
                                   borderRadius: BorderRadius.circular(10),
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),

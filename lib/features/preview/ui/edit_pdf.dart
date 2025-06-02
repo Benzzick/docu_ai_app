@@ -5,6 +5,7 @@ import 'package:docu_ai_app/shared/widgets/back_button_app_bar.dart';
 import 'package:floating_bubbles/floating_bubbles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class EditPdf extends ConsumerStatefulWidget {
   const EditPdf({super.key, required this.pdf});
@@ -25,9 +26,10 @@ class _EditPdfState extends ConsumerState<EditPdf> {
         TextEditingController(text: widget.pdf.editableText);
   }
 
-  void saveDocument() {
-    ref.read(pdfProvider.notifier).editPdf(
+  Future<void> saveDocument() async {
+    await ref.read(pdfProvider.notifier).editPdf(
           Pdf(
+            id: widget.pdf.id,
             pdfName: widget.pdf.pdfName,
             pdfPath: widget.pdf.pdfPath,
             thumbnailBytes: widget.pdf.thumbnailBytes,
@@ -35,6 +37,12 @@ class _EditPdfState extends ConsumerState<EditPdf> {
             editableText: documentEditController.text,
           ),
         );
+    context.pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Saved Document!'),
+      ),
+    );
   }
 
   @override

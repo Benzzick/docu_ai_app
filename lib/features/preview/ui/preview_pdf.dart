@@ -37,9 +37,10 @@ class _PreviewPdfState extends ConsumerState<PreviewPdf> {
     );
   }
 
-  void saveTitle() {
-    ref.read(pdfProvider.notifier).editPdf(
+  Future<void> saveTitle() async {
+    await ref.read(pdfProvider.notifier).editPdf(
           Pdf(
+            id: widget.pdf.id,
             pdfName: titleEditController.text,
             pdfPath: widget.pdf.pdfPath,
             thumbnailBytes: widget.pdf.thumbnailBytes,

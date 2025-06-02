@@ -45,6 +45,10 @@ class _PreviewScannedImageState extends ConsumerState<PreviewScannedImage> {
     });
 
     if (convertedPdf == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text('Did not convert image to file')),
+              );
       return;
     }
 

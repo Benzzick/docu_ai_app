@@ -180,7 +180,9 @@ class _DocScreenState extends ConsumerState<DocScreen> {
                                           EdgeInsets.only(left: width * 0.08),
                                     ),
                                   InkWell(
-                                    onTap: () async {},
+                                    onTap: () async {
+                                      context.push('/preview-pdf', extra: pdf);
+                                    },
                                     borderRadius: BorderRadius.circular(10),
                                     child: Container(
                                       decoration: !showListView

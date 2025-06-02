@@ -59,12 +59,14 @@ class PDFNotifier extends StateNotifier<List<Pdf>> {
     state = pdfs.reversed.toList();
   }
 
-  Future<Pdf> getFile(Uint8List bytes, String pdfText) async {
-    final filename = Uuid().v4();
+  Future<Pdf> getFile(Uint8List bytes, String pdfText, String? fileTitle,
+      String? pdfTitle) async {
+    final filename = fileTitle ?? Uuid().v4();
     final fileDir = await syspath.getApplicationDocumentsDirectory();
     final db = await _getPdfDatabase();
 
-    final file = File('${fileDir.path}/$filename.pdf');
+    final file =
+        File(fileTitle == null ? '${fileDir.path}/$filename.pdf' : filename);
 
     await file.writeAsBytes(bytes);
 
@@ -74,11 +76,11 @@ class PDFNotifier extends StateNotifier<List<Pdf>> {
     final image = await page.render(
       width: 300,
       height: 400,
-      format: PdfPageImageFormat.png,
+      format: PdfPageImageFormat.jpeg,
     );
 
     final pdf = Pdf(
-      pdfName: 'Untitled',
+      pdfName: pdfTitle ?? 'Untitled',
       pdfPath: file.path,
       thumbnailBytes: image!.bytes,
       dateModified: DateTime.now(),
@@ -104,7 +106,6 @@ class PDFNotifier extends StateNotifier<List<Pdf>> {
 
   Future<Pdf?> convertImgToPdf(Uint8List imageBytes) async {
     final gemini = Gemini.instance;
-    print('started');
     String? outputText;
     try {
       final value = await gemini.prompt(parts: [
@@ -116,8 +117,6 @@ class PDFNotifier extends StateNotifier<List<Pdf>> {
     } catch (e) {
       return null;
     }
-
-    print('converted');
 
     if (outputText == null) {
       return null;
@@ -134,12 +133,44 @@ class PDFNotifier extends StateNotifier<List<Pdf>> {
     );
 
     final pdfBytes = await pdf.save();
-    print('gotten pdf');
 
-    return getFile(pdfBytes, outputText);
+    return getFile(pdfBytes, outputText, null, null);
   }
 
-  void editPdf(Pdf pdfToEdit) {}
+  Future<void> editPdf(Pdf pdfToEdit) async {
+    await deletePdf(pdfToEdit);
+    final pdf = pw.Document();
 
-  void deletePdf(Pdf pdfToDelete) {}
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Text(pdfToEdit.editableText);
+        },
+      ),
+    );
+
+    final pdfBytes = await pdf.save();
+
+    await getFile(
+      pdfBytes,
+      pdfToEdit.editableText,
+      pdfToEdit.pdfPath,
+      pdfToEdit.pdfName,
+    );
+  }
+
+  Future<void> deletePdf(Pdf pdfToDelete) async {
+    final db = await _getPdfDatabase();
+    state = state.where(
+      (element) {
+        return element.id != pdfToDelete.id;
+      },
+    ).toList();
+
+    await db.delete(
+      'user_pdfs', // Table name
+      where: 'id = ?', // WHERE clause
+      whereArgs: [pdfToDelete.id], // WHERE arguments
+    );
+  }
 }

@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:docu_ai_app/core/global_providers/pdf_provider.dart';
+import 'package:docu_ai_app/core/global_providers/scanned_image_service_provider.dart';
+import 'package:docu_ai_app/core/global_providers/tab_provider.dart';
 import 'package:docu_ai_app/shared/widgets/pdf_thumbnail_button.dart';
 import 'package:docu_ai_app/features/home/widgets/rounded_button.dart';
 import 'package:floating_bubbles/floating_bubbles.dart';
@@ -36,6 +38,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         }
       },
     );
+  }
+
+  Future<void> uploadPicture() async {
+    final scanner = ref.read(scannedImageServiceProvider);
+    final pickedImage = await scanner.uploadPicture();
+    if (pickedImage != null) {
+      context.push('/preview-image', extra: pickedImage);
+    }
   }
 
   @override
@@ -90,7 +100,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             : FloatingActionButton.extended(
                 key: ValueKey(false),
                 onPressed: () {
-                  floatingButtonCentered = false;
+                  ref.read(tabProvider.notifier).state = 1;
                   timeOnCenter = 0;
                   setState(() {});
                 },
@@ -141,8 +151,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          RoundedButton(icon: Icons.add_a_photo_outlined),
-                          RoundedButton(icon: Icons.file_upload_outlined),
+                          RoundedButton(
+                            icon: Icons.add_a_photo_outlined,
+                            onPressed: () {
+                              ref.read(tabProvider.notifier).state = 1;
+                            },
+                          ),
+                          RoundedButton(
+                            icon: Icons.file_upload_outlined,
+                            onPressed: uploadPicture,
+                          ),
                         ],
                       ),
                       Text(

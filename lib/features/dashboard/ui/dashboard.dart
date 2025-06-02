@@ -1,4 +1,4 @@
-import 'package:docu_ai_app/features/dashboard/providers/tab_provider.dart';
+import 'package:docu_ai_app/core/global_providers/tab_provider.dart';
 import 'package:docu_ai_app/features/docs/ui/doc_screen.dart';
 import 'package:docu_ai_app/features/home/ui/home_screen.dart';
 import 'package:docu_ai_app/features/scan/ui/scan_screen.dart';

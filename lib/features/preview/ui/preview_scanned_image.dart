@@ -20,6 +20,7 @@ class PreviewScannedImage extends ConsumerStatefulWidget {
 
 class _PreviewScannedImageState extends ConsumerState<PreviewScannedImage> {
   late File image;
+  bool isConverting = false;
 
   @override
   void initState() {
@@ -28,74 +29,113 @@ class _PreviewScannedImageState extends ConsumerState<PreviewScannedImage> {
   }
 
   Future<void> convertImageToPdf() async {
-    final convertedPdf =
-        await ref.read(pdfProvider.notifier).getFile('assets/pdfs/pdf-1.pdf');
+    setState(() {
+      isConverting = true;
+    });
+
+  
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    final convertedPdf = await ref
+        .read(pdfProvider.notifier)
+        .convertImgToPdf(image.readAsBytesSync());
+
+    setState(() {
+      isConverting = false;
+    });
+
+    if (convertedPdf == null) {
+      return;
+    }
+
     context.pushReplacement('/preview-pdf', extra: convertedPdf);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Column(
-        children: [
-          BackButtonAppBar(
-            child: RoundedTextButton(
-                text: 'Convert', onPressed: convertImageToPdf),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: FloatingBubbles.alwaysRepeating(
-                      noOfBubbles: 15,
-                      colorsOfBubbles: [
-                        Theme.of(context).colorScheme.secondary,
-                      ],
-                      sizeFactor: 0.2,
-                      opacity: 50,
-                      paintingStyle: PaintingStyle.fill,
-                      strokeWidth: 8,
-                      shape: BubbleShape.circle,
-                      speed: BubbleSpeed.normal,
-                    ),
-                  ),
-                  Column(
+        body: Stack(
+      children: [
+        Center(
+          child: Column(
+            children: [
+              BackButtonAppBar(
+                child: RoundedTextButton(
+                  text: 'Convert',
+                  onPressed: convertImageToPdf,
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Stack(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(30),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.file(
-                            image,
-                            key: ValueKey(image.path),
-                          ),
+                      Positioned.fill(
+                        child: FloatingBubbles.alwaysRepeating(
+                          noOfBubbles: 15,
+                          colorsOfBubbles: [
+                            Theme.of(context).colorScheme.secondary,
+                          ],
+                          sizeFactor: 0.2,
+                          opacity: 50,
+                          paintingStyle: PaintingStyle.fill,
+                          strokeWidth: 8,
+                          shape: BubbleShape.circle,
+                          speed: BubbleSpeed.normal,
                         ),
                       ),
-                      RoundedIconButton(
-                        icon: Icons.crop_rotate_rounded,
-                        onPressed: () async {
-                          final scanner = ref.read(scannedImageServiceProvider);
-                          final croppedImage = await scanner.cropPicture(image);
-                          if (croppedImage != null) {
-                            setState(() {
-                              image = croppedImage;
-                            });
-                          }
-                        },
-                      ),
-                      SizedBox(
-                        height: 30,
+                      Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(30),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.file(
+                                image,
+                                key: ValueKey(image.path),
+                              ),
+                            ),
+                          ),
+                          RoundedIconButton(
+                            icon: Icons.crop_rotate_rounded,
+                            onPressed: () async {
+                              final scanner =
+                                  ref.read(scannedImageServiceProvider);
+                              final croppedImage =
+                                  await scanner.cropPicture(image);
+                              if (croppedImage != null) {
+                                setState(() {
+                                  image = croppedImage;
+                                });
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (isConverting)
+          Positioned.fill(
+            child: Container(
+              color: Theme.of(context).colorScheme.primary.withAlpha(120),
+              child: Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 7,
+                  strokeCap: StrokeCap.round,
+                  color: Theme.of(context).colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                ),
               ),
             ),
           ),
-        ],
-      ),
+      ],
     ));
   }
 }

@@ -121,9 +121,8 @@ class _ScanScreenState extends ConsumerState<ScanScreen>
                           borderColor: Theme.of(context).colorScheme.primary,
                           borderWidth: 3.0,
                           borderRadius: 12.0,
-                          padding: 30.0, // Adjust padding as needed
-                          bottomControlsHeight:
-                              0.0, // Adjust based on your controls height
+                          padding: 30.0,
+                          bottomControlsHeight: 0.0,
                         ),
                       ),
                       Align(

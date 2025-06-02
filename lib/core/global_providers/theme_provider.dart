@@ -1,18 +1,15 @@
-import 'package:docu_ai_app/core/app_styles/app_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:docu_ai_app/models/enums.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final themeNotifierProvider =
-    StateNotifierProvider<ThemeNotifier, ThemeData>((ref) {
-  return ThemeNotifier(AppTheme.lightTheme);
+    StateNotifierProvider<ThemeNotifier, ThemeType>((ref) {
+  return ThemeNotifier();
 });
 
-
-class ThemeNotifier extends StateNotifier<ThemeData> {
-  ThemeNotifier(super._state);
+class ThemeNotifier extends StateNotifier<ThemeType> {
+  ThemeNotifier() : super(ThemeType.light);
 
   void toggleTheme() {
-    state =
-        state == AppTheme.lightTheme ? AppTheme.darkTheme : AppTheme.lightTheme;
+    state = state == ThemeType.dark ? ThemeType.light : ThemeType.dark;
   }
 }

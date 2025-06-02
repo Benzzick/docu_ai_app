@@ -7,6 +7,7 @@ import 'package:docu_ai_app/shared/widgets/pdf_thumbnail_button.dart';
 import 'package:floating_bubbles/floating_bubbles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class DocScreen extends ConsumerStatefulWidget {
   const DocScreen({super.key});
@@ -62,6 +63,17 @@ class _DocScreenState extends ConsumerState<DocScreen> {
               .headlineLarge!
               .copyWith(color: Colors.white),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.push('/settings');
+            },
+            icon: Icon(Icons.settings),
+          ),
+          SizedBox(
+            width: 10,
+          )
+        ],
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Stack(

@@ -27,6 +27,7 @@ class _PreviewPdfState extends ConsumerState<PreviewPdf> {
   late TextEditingController titleEditController;
   late TextEditingController documentEditController;
   late PdfController pdfController;
+  bool isSaving = false;
 
   @override
   void initState() {
@@ -38,6 +39,10 @@ class _PreviewPdfState extends ConsumerState<PreviewPdf> {
   }
 
   Future<void> saveTitle() async {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      isSaving = true;
+    });
     await ref.read(pdfProvider.notifier).editPdf(
           Pdf(
             id: widget.pdf.id,
@@ -48,6 +53,9 @@ class _PreviewPdfState extends ConsumerState<PreviewPdf> {
             editableText: widget.pdf.editableText,
           ),
         );
+    setState(() {
+      isSaving = false;
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Saved Title!'),
@@ -152,9 +160,18 @@ class _PreviewPdfState extends ConsumerState<PreviewPdf> {
                     Expanded(
                       child: TextField(
                         controller: titleEditController,
+                        onChanged: (value) {
+                          setState(() {});
+                        },
                       ),
                     ),
-                    RoundedTextButton(text: 'Save Title', onPressed: saveTitle),
+                    RoundedTextButton(
+                        text: 'Save Title',
+                        onPressed: titleEditController.text.trim() ==
+                                    widget.pdf.pdfName.trim() ||
+                                titleEditController.text.trim().isEmpty
+                            ? null
+                            : saveTitle),
                   ],
                 ),
               ),
@@ -174,7 +191,14 @@ class _PreviewPdfState extends ConsumerState<PreviewPdf> {
                     RoundedIconButton(
                       icon: Icons.edit_square,
                       onPressed: () {
-                        context.push('/edit-pdf', extra: widget.pdf);
+                        context
+                            .push('/edit-pdf', extra: widget.pdf)
+                            .then((_) async {
+                          final newDoc =
+                              PdfDocument.openFile(widget.pdf.pdfPath);
+                          await pdfController.loadDocument(newDoc);
+                          setState(() {});
+                        });
                       },
                     ),
                     RoundedIconButton(
@@ -194,6 +218,20 @@ class _PreviewPdfState extends ConsumerState<PreviewPdf> {
               )
             ],
           ),
+          if (isSaving)
+            Positioned.fill(
+              child: Container(
+                color: Theme.of(context).colorScheme.primary.withAlpha(120),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 7,
+                    strokeCap: StrokeCap.round,
+                    color: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -33,9 +33,6 @@ class _PreviewScannedImageState extends ConsumerState<PreviewScannedImage> {
       isConverting = true;
     });
 
-  
-    await Future.delayed(const Duration(milliseconds: 100));
-
     final convertedPdf = await ref
         .read(pdfProvider.notifier)
         .convertImgToPdf(image.readAsBytesSync());
@@ -47,7 +44,7 @@ class _PreviewScannedImageState extends ConsumerState<PreviewScannedImage> {
     if (convertedPdf == null) {
       ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text('Did not convert image to file')),
+                    content: Text('Did not convert image to file'),),
               );
       return;
     }

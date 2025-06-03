@@ -7,9 +7,7 @@ final cameraControllerProvider =
         (ref) => CameraControllerNotifier());
 
 class CameraControllerNotifier extends StateNotifier<CameraController?> {
-  CameraControllerNotifier() : super(null) {
-    initializeCamera();
-  }
+  CameraControllerNotifier() : super(null);
 
   Future<void> initializeCamera(
       {CameraType cameraType = CameraType.back}) async {

@@ -1,6 +1,8 @@
 import 'package:docu_ai_app/core/global_providers/tab_provider.dart';
 import 'package:docu_ai_app/features/docs/ui/doc_screen.dart';
 import 'package:docu_ai_app/features/home/ui/home_screen.dart';
+import 'package:docu_ai_app/features/scan/providers/camera_contoller_provider.dart';
+import 'package:docu_ai_app/features/scan/providers/camera_type_provider.dart';
 import 'package:docu_ai_app/features/scan/ui/scan_screen.dart';
 import 'package:docu_ai_app/models/tab_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,23 @@ class Dashboard extends ConsumerStatefulWidget {
 }
 
 class _DashboardState extends ConsumerState<Dashboard> {
+  void _handleTabChange(int? previous, int current) {
+    const int scanTabIndex = 1; // Index of the scan tab
+
+    // If switching away from scan tab, stop camera
+    if (previous == scanTabIndex && current != scanTabIndex) {
+      ref.read(cameraControllerProvider.notifier).stopCamera();
+    }
+
+    // If switching to scan tab, initialize camera
+    if (current == scanTabIndex && previous != scanTabIndex) {
+      final currentCameraType = ref.read(cameraTypeProvider);
+      ref.read(cameraControllerProvider.notifier).initializeCamera(
+            cameraType: currentCameraType,
+          );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<TabScreen> tabs = [
@@ -26,14 +45,19 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
     final tabIndex = ref.watch(tabProvider);
 
+    ref.listen<int>(tabProvider, (previous, next) {
+      _handleTabChange(previous, next);
+    });
+
     return Scaffold(
       body: IndexedStack(
         index: tabIndex,
-        children: tabs.map(
-          (tab) {
-            return tab.screen;
+        children: List.generate(
+          tabs.length,
+          (index) {
+            return tabs[index].screen;
           },
-        ).toList(),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Theme.of(context).colorScheme.primary,

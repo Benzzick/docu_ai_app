@@ -70,7 +70,13 @@ class AuthScreen extends ConsumerWidget {
                           ),
                         ],
                       )),
-                )
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Once you're done close the auth screen in order not to be redirected again!",
+                ),
               ],
             ),
           ],

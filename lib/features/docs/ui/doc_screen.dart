@@ -148,16 +148,9 @@ class _DocScreenState extends ConsumerState<DocScreen> {
                     if (filtered.isEmpty) {
                       return Expanded(
                         child: SingleChildScrollView(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 7,
-                              strokeCap: StrokeCap.round,
-                              color: Theme.of(context).colorScheme.primary,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.surface,
-                            ),
-                          ),
-                        ),
+                            child: Center(
+                          child: Text('No Files Added Yet!'),
+                        )),
                       );
                     }
                     return child!;

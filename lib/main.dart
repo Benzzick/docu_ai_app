@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:go_router/go_router.dart';
 
-const apiKey = 'AIzaSyDhiK3uttfw0aBn7lj3BeR_ofhArLgfcX0';
+const apiKey = '';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

@@ -11,9 +11,8 @@ class PDFNotifier extends StateNotifier<Person?> {
   PDFNotifier() : super(null);
 
   Account initialiseAccount() {
-    Client client = Client()
-        .setEndpoint("https://fra.cloud.appwrite.io/v1")
-        .setProject("68407bb1000cf804162a");
+    Client client =
+        Client().setEndpoint("https://fra.cloud.appwrite.io/v1").setProject("");
     Account account = Account(client);
     return account;
   }

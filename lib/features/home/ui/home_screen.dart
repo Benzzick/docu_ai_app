@@ -174,13 +174,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   builder: (context, ref, child) {
                     if (pdfs.isEmpty) {
                       return Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 7,
-                          strokeCap: StrokeCap.round,
-                          color: Theme.of(context).colorScheme.primary,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                        ),
+                        child: Text('No Files Added Yet!'),
                       );
                     }
                     return child!;
@@ -212,6 +206,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     child: FutureBuilder(
                                       future: file.exists(),
                                       builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return CircularProgressIndicator(
+                                            strokeWidth: 7,
+                                            strokeCap: StrokeCap.round,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          );
+                                        }
+
                                         return PdfThumbnailButton(pdf: pdf);
                                       },
                                     ),

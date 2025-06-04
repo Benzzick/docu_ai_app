@@ -107,7 +107,10 @@ class _EditPdfState extends ConsumerState<EditPdf> {
                         maxLines: null,
                         decoration: const InputDecoration.collapsed(
                             hintText: "Start typing..."),
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),

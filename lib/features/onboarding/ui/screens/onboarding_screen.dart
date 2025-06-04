@@ -89,7 +89,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         height: 50,
                         child: ElevatedButton(
                           onPressed: () {
-                            context.push('/auth');
+                            if (currentPage < banners.length - 1) {
+                              bannersController.nextPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut);
+                            } else {
+                              context.push('/auth');
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             shadowColor: Theme.of(context).colorScheme.primary,

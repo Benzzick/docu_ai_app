@@ -5,10 +5,12 @@ import 'package:docu_ai_app/models/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:go_router/go_router.dart';
 
-const apiKey = 'AIzaSyDhiK3uttfw0aBn7lj3BeR_ofhArLgfcX0';
+const apiKey = '';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Gemini.init(apiKey: apiKey);
   runApp(ProviderScope(child: App()));
 }
@@ -19,12 +21,36 @@ class App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeType = ref.watch(themeNotifierProvider);
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: themeType == ThemeType.dark
-          ? AppTheme.darkTheme
-          : AppTheme.lightTheme,
-      routerConfig: AppRouter.goRouter,
+
+    return FutureBuilder<GoRouter>(
+      future: AppRouter.createRouter(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 7,
+                  strokeCap: StrokeCap.round,
+                  color: Theme.of(context).colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                ),
+              ),
+            ),
+            theme: themeType == ThemeType.dark
+                ? AppTheme.darkTheme
+                : AppTheme.lightTheme,
+          );
+        }
+
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          theme: themeType == ThemeType.dark
+              ? AppTheme.darkTheme
+              : AppTheme.lightTheme,
+          routerConfig: snapshot.data!,
+        );
+      },
     );
   }
 }

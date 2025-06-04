@@ -1,12 +1,14 @@
+import 'package:docu_ai_app/core/global_providers/person_provider.dart';
 import 'package:floating_bubbles/floating_bubbles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends ConsumerWidget {
   const AuthScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
           child: Padding(
@@ -34,8 +36,14 @@ class AuthScreen extends StatelessWidget {
                 SizedBox(
                   height: 70,
                   child: ElevatedButton(
-                      onPressed: () {
-                        context.go('/dash');
+                      onPressed: () async {
+                        await ref
+                            .read(personProvider.notifier)
+                            .loginWithGoogle();
+                        final person = ref.read(personProvider);
+                        if (person != null) {
+                          context.go('/dash');
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         shadowColor: Theme.of(context).colorScheme.surface,
